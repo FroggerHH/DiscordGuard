@@ -47,7 +47,7 @@ namespace DiscordGuard
             if(creatorName == string.Empty) return;
 
             string pieceName = __instance.m_piece.m_name;
-            bool flag = true; 
+            bool flag = true;
             if(Player.m_localPlayer)
             {
                 flag = PrivateArea.CheckAccess(Player.m_localPlayer.transform.position);
@@ -399,7 +399,7 @@ namespace DiscordGuard
         {
             string creatorName = currentDiscordGuard?.nview?.GetZDO()?.GetString("creatorName");
             string playerName = Player.m_localPlayer?.GetPlayerName();
-
+            if(creatorName == string.Empty) return true;
             string pieceName = __instance.m_name;
             bool flag = PrivateArea.CheckAccess(Player.m_localPlayer.transform.position, 0f, false) || playerName == creatorName;
 
@@ -408,27 +408,15 @@ namespace DiscordGuard
                 username = $"$Guard $WardNickPrefix {creatorName} $WardNickPostfix ",
                 content = $"{playerName} $CraftingStation {pieceName}!"
             };
-            if(creatorName != string.Empty)
+            if(!flag && _self.canSendWebHook)
             {
-                if(!flag && _self.canSendWebHook)
-                {
-                    Discord.SendDiscordMessage(data);
-                    _self.canSendWebHook = false;
-                }
+                Discord.SendDiscordMessage(data);
+                _self.canSendWebHook = false;
             }
-            else if(_self.canSendLogWebHook)
-            {
-                if(string.IsNullOrEmpty(creatorName))
-                {
-                    return true;
-                }
-                else
-                {
-                    data.username = $"$Log $Guard $WardNickPrefix {creatorName} $WardNickPostfix";
-                }
+            data.username = $"$Log $Guard $WardNickPrefix {creatorName} $WardNickPostfix";
 
-                Discord.SendDiscordMessage(data, true); _self.canSendLogWebHook = false;
-            }
+            Discord.SendDiscordMessage(data, true);
+            _self.canSendLogWebHook = false;
 
             if(!flag && preventCrafting)
             {
