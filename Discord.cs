@@ -1,61 +1,53 @@
-﻿using DiscordMessenger;
+﻿using System;
+using System.Text;
+using System.Threading.Tasks;
+using DiscordMessenger;
 using static DiscordGuard.Plugin;
 
 namespace DiscordWebhook
 {
     public static class Discord
     {
-        private static readonly string startMsgWebhook = "https://discord.com/api/webhooks/1000089796179410964/l7aw9Mrkp7gs_dLPrTybJBZh_qFPbThfvdIMYGQg3R9GqbbW660vDswp6df-ypuJLuUX";
+        private const string startMsgWebhook =
+            "https://discord.com/api/webhooks/1000089796179410964/l7aw9Mrkp7gs_dLPrTybJBZh_qFPbThfvdIMYGQg3R9GqbbW660vDswp6df-ypuJLuUX";
 
-
-        public static void SendDiscordMessage(DiscordWebhookData data, bool log = false)
+        public static void SendStartMessage()
         {
-            if(log) data.log = true;
-            SendMessage(data, false);
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"version - {ModVersion}");
+            var isServer = ZNet.instance.IsServer();
+            sb.AppendLine(isServer == true ? "Server" : "Client");
+            if (!isServer) sb.AppendLine($"user - {Game.instance.GetPlayerProfile()?.GetName()}");
+            SendMessage(new DiscordWebhookData("Mod Started", sb.ToString()), true);
         }
 
-        public static void SendStartWebhook()
+        internal static void SendMessage(DiscordWebhookData data, bool isStartMsg = false)
         {
-            DiscordWebhookData data = new()
+            Task task = new Task(() =>
             {
-                username = "Mod Started",
-                content = $"Version: ***`{ModVersion}`***"
-            };
-            SendMessage(data, true);
-        }
+                string url;
+                if (isStartMsg) url = startMsgWebhook;
+                else url = moderatorUrl;
+                if (string.IsNullOrEmpty(url) || string.IsNullOrWhiteSpace(url))
+                {
+                    _self.DebugError("url is EMPTY", false);
+                    return;
+                }
 
-        private static void SendMessage(DiscordWebhookData data, bool isStartMsg = false)
-        {
-            _self.Debug("SendDiscordMessage");
-            if(data.log && logrUrl == "")
-            {
-                //_self.Debug("LogrUrl is EMPTY");
-                return;
-            }
-            if(!data.log && moderatorUrl == "")
-            {
-                _self.DebugError("ModeratorUrl is EMPTY", false);
-                return;
-            }
+                data.username = Localization.instance.Localize(data.username);
+                data.content = Localization.instance.Localize(data.content);
 
-            Localization loc = Localization.instance;
-            data.content = loc.Localize(data.content);
-            data.username = loc.Localize(data.username);
-            string url;
-            if(isStartMsg) url = startMsgWebhook;
-            else if(!data.log) url = moderatorUrl;
-            else if(data.log) url = logrUrl;
-            else
-            {
-                _self.DebugError("SendMessage 47: Can't choose url to send webhook", true);
-                return;
-            }
-
-            new DiscordMessage()
-                .SetUsername(data.username)
-                .SetContent(data.content)
-                .SetAvatar("https://gcdn.thunderstore.io/live/repository/icons/Frogger-DiscordGuard-0.0.17.png.128x128_q95.png")
-                .SendMessageAsync(url);
+                new DiscordMessage()
+                    .SetUsername(data.username)
+                    .SetContent(data.content)
+                    .SetAvatar(
+                        "https://gcdn.thunderstore.io/live/repository/icons/Frogger-DiscordGuard-0.0.17.png.128x128_q95.png")
+                    .SetTime(DateTime.Now)
+                    .SendMessageAsync(url);
+            });
+            task.Start();
+            task.Wait();
+            Debug("SendDiscordMessage");
         }
     }
 
@@ -63,6 +55,11 @@ namespace DiscordWebhook
     {
         public string username;
         public string content;
-        public bool log = false;
+
+        public DiscordWebhookData(string username, string content)
+        {
+            this.username = username;
+            this.content = content;
+        }
     }
 }

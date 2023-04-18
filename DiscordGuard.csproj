@@ -37,6 +37,9 @@
         <Reference Include="0Harmony">
           <HintPath>..\..\..\Steam\steamapps\common\Valheim\BepInEx\core\0Harmony.dll</HintPath>
         </Reference>
+        <Reference Include="assembly_guiutils">
+          <HintPath>..\Utils\assembly_guiutils_publicized.dll</HintPath>
+        </Reference>
         <Reference Include="assembly_utils">
           <HintPath>..\Utils\assembly_utils_publicized.dll</HintPath>
         </Reference>
@@ -48,6 +51,9 @@
         </Reference>
         <Reference Include="fastJSON">
           <HintPath>..\Utils\fastJSON.dll</HintPath>
+        </Reference>
+        <Reference Include="LocalizationManager">
+          <HintPath>..\Utils\LocalizationManager.dll</HintPath>
         </Reference>
         <Reference Include="ServerSync">
           <HintPath>..\Utils\ServerSync.dll</HintPath>
@@ -69,8 +75,10 @@
     <ItemGroup>
         <Compile Include="ConfigurationManagerAttributes.cs" />
         <Compile Include="Discord.cs" />
-        <Compile Include="DiscordGuard.cs" />
-        <Compile Include="Patch.cs" />
+        <Compile Include="Helper.cs" />
+        <Compile Include="Patch\DoorPatch.cs" />
+        <Compile Include="Patch\Patch.cs" />
+        <Compile Include="Patch\WearNTearPatch.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
@@ -82,11 +90,22 @@
       <Content Include="translations\Russian.yml" />
       <Content Include="translations\Spanish.yml" />
     </ItemGroup>
+    <ItemGroup>
+      <None Include="App.config" />
+      <None Include="packages.config" />
+    </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <Target Name="CopyDLL" AfterTargets="ILRepack">
         <Copy SourceFiles="$(TargetDir)$(ProjectName).dll" DestinationFolder="D:\Steam\steamapps\common\Valheim\BepInEx\plugins" />
         <Copy SourceFiles="$(TargetDir)$(ProjectName).dll" DestinationFolder="D:\Steam\steamapps\common\Valheim dedicated server\BepInEx\plugins" />
         <Copy SourceFiles="$(TargetDir)$(ProjectName).dll" DestinationFolder="Build" />
+    </Target>
+    <Import Project="packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets" Condition="Exists('packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets')" />
+    <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+      <PropertyGroup>
+        <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
+      </PropertyGroup>
+      <Error Condition="!Exists('packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets'))" />
     </Target>
 
 </Project>
