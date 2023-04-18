@@ -22,7 +22,7 @@ internal class Plugin : BaseUnityPlugin
 
     internal static PrivateArea current;
     internal static Plugin _self;
-    internal bool canSendWebHook = false;
+    internal bool canSendWebHook = true;
     internal bool inZone = false;
 
     #endregion
@@ -135,20 +135,20 @@ internal class Plugin : BaseUnityPlugin
         //if(Player.m_localPlayer)
         //{
         moderatorUrl = moderatorUrlConfig.Value;
-        logrUrl = logrUrlConfig.Value;
+        //logrUrl = logrUrlConfig.Value;
         languageServer = languageServerConfig.Value;
         //localization.SetupLanguage(languageServer);
-        preventItemDropPickup = preventItemDropPickupConfig.Value == Toggle.On;
-        preventPickablePickup = preventPickablePickupConfig.Value == Toggle.On;
-        preventCrafting = preventCraftingConfig.Value == Toggle.On;
-        webHookTimer = webHookTimerConfig.Value;
-        logWebHookTimer = logWebHookTimerConfig.Value;
+        //preventItemDropPickup = preventItemDropPickupConfig.Value == Toggle.On;
+        //preventPickablePickup = preventPickablePickupConfig.Value == Toggle.On;
+        //preventCrafting = preventCraftingConfig.Value == Toggle.On;
+        //webHookTimer = webHookTimerConfig.Value;
+        //logWebHookTimer = logWebHookTimerConfig.Value;
 
-        if (moderatorUrl != string.Empty) moderatorUrl = moderatorUrl.Replace(" ", "");
+        moderatorUrl = moderatorUrl.Replace(" ", "");
 
-        if (logrUrl != string.Empty) logrUrl = logrUrl.Replace(" ", "");
+        //if (logrUrl != string.Empty) logrUrl = logrUrl.Replace(" ", "");
 
-        InvokeRepeating("LogWebHookTimer", logWebHookTimer, logWebHookTimer);
+        //InvokeRepeating("LogWebHookTimer", logWebHookTimer, logWebHookTimer);
 
         Debug("Configuration Received");
         //}
@@ -195,9 +195,6 @@ internal class Plugin : BaseUnityPlugin
     private void Awake()
     {
         _self = this;
-        //localization.SetupLanguage("English");
-
-        Config.SaveOnConfigSet = false;
 
         Localizer.Load();
 
@@ -212,6 +209,7 @@ internal class Plugin : BaseUnityPlugin
         };
 
         #region config
+        Config.SaveOnConfigSet = false;
 
         serverConfigLocked = config("Main", "Lock Configuration", Toggle.On,
             "If on, the configuration is locked and can be changed by server admins only.");
@@ -242,6 +240,7 @@ internal class Plugin : BaseUnityPlugin
         // logWebHookTimerConfig = config("Main", "Log webHookTimer", 2f,
         //     "This is the minimum time interval between sending log webhooks.", true);
 
+        Config.SaveOnConfigSet = true;
         #endregion
 
         SetupWatcher();
@@ -254,10 +253,8 @@ internal class Plugin : BaseUnityPlugin
         InvokeRepeating(nameof(EnterLeftGuard), 3, 3);
 
         harmony.PatchAll(typeof(DoorPatch));
-        //harmony.PatchAll(typeof(PlayerStartPatch));
+        harmony.PatchAll(typeof(ZNetSceneStartPatch));
         harmony.PatchAll(typeof(WearNTearPatch));
-        //harmony.PatchAll(typeof(Patch));
-        Config.Reload();
     }
 
     private void UdateCurrentPrivateZone()
@@ -293,7 +290,7 @@ internal class Plugin : BaseUnityPlugin
         var playerName = Helper.GetPlayerName();
         DiscordWebhookData data = new($"{creatorName} $Guard", $"{playerName} ");
 
-        bool flag = PrivateArea.CheckAccess(Player.m_localPlayer.transform.position, 0f, false, true);
+        bool flag = Helper.CheckAccess();
         if (flag)
         {
             if (!inZone) return;

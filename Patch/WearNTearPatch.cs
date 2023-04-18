@@ -7,99 +7,51 @@ using static DiscordGuard.Plugin;
 
 namespace DiscordGuard;
 
+[HarmonyPatch]
 internal class WearNTearPatch
 {
     [HarmonyPatch(typeof(WearNTear), nameof(WearNTear.Damage)), HarmonyPostfix]
     static void WearNTearDamagePatch(WearNTear __instance, HitData hit)
     {
-        string creatorName = current?.nview?.GetZDO()?.GetString("creatorName");
-        string playerName = Player.m_localPlayer?.GetPlayerName();
-        if (creatorName == string.Empty) return;
+        if (!Helper.GetCurrentAreaOwnerName(out string creatorName)) return;
+        Character attacker = hit.GetAttacker();
+        if (!attacker) return;
+        string attackerMName = attacker.GetHoverName();
 
         string pieceName = __instance.m_piece.m_name;
-        bool flag = true;
-        if (Player.m_localPlayer)
-        {
-            flag = PrivateArea.CheckAccess(Player.m_localPlayer.transform.position);
-        }
+        bool flag = Helper.CheckAccess();
+        if (flag) return;
 
-        DiscordWebhookData data = new($"$Guard $WardNickPrefix {creatorName} $WardNickPostfix", "");
+        DiscordWebhookData data = new($"$Guard {creatorName}", $"");
 
-        Character attacker = hit.GetAttacker();
 
-        if (attacker == null)
+        if (attacker.IsPlayer())
         {
-            return;
+            data.content = $"{Helper.GetPlayerName()} $DamageDestructible {pieceName}.";
         }
+        else data.content = $"{attackerMName} $MobDamageDestructible1 {pieceName} $MobDamageDestructible {attackerMName}.";
 
-        if (attacker.IsPlayer() && current)
-        {
-            data.content = $"{playerName} $DamageDestructible {pieceName}.";
-        }
-        else if (attacker.IsPlayer())
-        {
-            data.content = $"{playerName} $NoWardDamageDestructible {pieceName} $1NoWardDamageDestructible";
-        }
 
-        if (!attacker.IsPlayer() && current)
-        {
-            data.content =
-                $"{hit.GetAttacker().m_name} $MobDamageDestructible1 {pieceName} $MobDamageDestructible {playerName}.";
-        }
-        else if (!attacker.IsPlayer())
-        {
-            data.content =
-                $"{hit.GetAttacker().m_name} $NoWardMobDamageDestructible1 {pieceName} $NoWardMobDamageDestructible.";
-        }
-
-        if (!flag && _self.canSendWebHook)
+        if (_self.canSendWebHook)
         {
             Discord.SendMessage(data);
-            _self.canSendWebHook = false;
         }
-
-        // if (_self.canSendLogWebHook)
-        // {
-        //     Discord.SendMessage(data, true);
-        //     _self.canSendLogWebHook = false;
-        // }
     }
 
     [HarmonyPatch(typeof(WearNTear), nameof(WearNTear.Destroy)), HarmonyPostfix]
     static void WearNTearDestroyPatch(WearNTear __instance)
     {
-        if (Player.m_localPlayer)
-        {
-            string creatorName = current?.nview?.GetZDO()?.GetString("creatorName");
-            string playerName = Player.m_localPlayer?.GetPlayerName();
+        if (!Helper.GetCurrentAreaOwnerName(out string creatorName)) return;
 
-            string pieceName = __instance.m_piece.m_name;
-            bool flag = PrivateArea.CheckAccess(Player.m_localPlayer.transform.position) || playerName == creatorName;
-            DiscordWebhookData data = new($"$Guard $WardNickPrefix {creatorName} $WardNickPostfix ",
-                $"{pieceName} $DestroyDestructible {playerName}.");
+        string pieceName = __instance.m_piece.m_name;
+        bool flag = Helper.CheckAccess();
+        if (flag || Utils.DistanceXZ(Player.m_localPlayer.transform.position, __instance.transform.position) > 5)
+            return; //TODO: Destroy detonation range
+        string playerName = Helper.GetPlayerName();
 
-            if (creatorName != string.Empty)
-            {
-                if (!flag && _self.canSendWebHook)
-                {
-                    Discord.SendMessage(data);
-                    _self.canSendWebHook = false;
-                }
-            }
-            else if (_self.canSendLogWebHook)
-            {
-                if (string.IsNullOrEmpty(creatorName))
-                {
-                    return;
-                }
-                else
-                {
-                    data.username = $"$Log $Guard $WardNickPrefix {creatorName} $WardNickPostfix";
-                }
+        DiscordWebhookData data = new($"$Guard {creatorName}", $"{pieceName} $DestroyDestructible {playerName}");
 
-                Discord.SendMessage(data, true);
-                _self.canSendLogWebHook = false;
-            }
-        }
+        if (!_self.canSendWebHook) return;
+        Discord.SendMessage(data);
     }
 }

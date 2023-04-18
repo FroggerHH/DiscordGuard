@@ -30,4 +30,9 @@ public static class Helper
         if (Player.m_localPlayer) return Player.m_localPlayer.GetPlayerName();
         return "-none-";
     }
+
+    public static bool CheckAccess()
+    {
+        return PrivateArea.CheckAccess(Player.m_localPlayer.transform.position, 0f, false, true);
+    }
 }

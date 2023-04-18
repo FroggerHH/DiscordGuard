@@ -9,22 +9,27 @@ namespace DiscordWebhook
     public static class Discord
     {
         private const string startMsgWebhook =
-            "https://discord.com/api/webhooks/1000089796179410964/l7aw9Mrkp7gs_dLPrTybJBZh_qFPbThfvdIMYGQg3R9GqbbW660vDswp6df-ypuJLuUX";
+            "https://discord.com/api/webhooks/1097881540651925535/wfOfWH50zp0adbb3HOVWuy9hs_jdrIquw13hv0ke7Q0H1mrGQ0exrPqPj30jIMIIIaOS";
 
         public static void SendStartMessage()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"version - {ModVersion}");
+            sb.AppendLine($"Mod version - {ModVersion}");
             var isServer = ZNet.instance.IsServer();
-            sb.AppendLine(isServer == true ? "Server" : "Client");
-            if (!isServer) sb.AppendLine($"user - {Game.instance.GetPlayerProfile()?.GetName()}");
+            string strIsServ = isServer == true ? "Server" : "Client";
+            string strIsAdmin = configSync.IsAdmin == true ? "Admin" : "Player";
+            sb.AppendLine($"User is {strIsServ}");
+            if (!isServer) sb.AppendLine($"User name - {Game.instance.GetPlayerProfile().GetName()}");
+            if (!isServer) sb.AppendLine($"User is {strIsAdmin}");
+            sb.AppendLine("----------------");
             SendMessage(new DiscordWebhookData("Mod Started", sb.ToString()), true);
         }
 
         internal static void SendMessage(DiscordWebhookData data, bool isStartMsg = false)
         {
-            Task task = new Task(() =>
-            {
+            Debug("SendDiscordMessage start");
+            //Task task = new Task(() =>
+            //{
                 string url;
                 if (isStartMsg) url = startMsgWebhook;
                 else url = moderatorUrl;
@@ -42,12 +47,14 @@ namespace DiscordWebhook
                     .SetContent(data.content)
                     .SetAvatar(
                         "https://gcdn.thunderstore.io/live/repository/icons/Frogger-DiscordGuard-0.0.17.png.128x128_q95.png")
-                    .SetTime(DateTime.Now)
+                    //.AddEmbed()
+                    //.SetTimestamp(DateTime.Now).Build()
                     .SendMessageAsync(url);
-            });
-            task.Start();
-            task.Wait();
-            Debug("SendDiscordMessage");
+                
+            //});
+            //task.Start();
+            //task.Wait();
+            Debug("SendDiscordMessage finalizes");
         }
     }
 
