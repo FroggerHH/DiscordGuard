@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordGuard", "DiscordGuard.csproj", "{46BDCABE-BEB1-491F-8631-310F5186A3DB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordWard", "DiscordWard.csproj", "{46BDCABE-BEB1-491F-8631-310F5186A3DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
