@@ -1,10 +1,51 @@
 ﻿using DiscordWebhook;
+using UnityEngine;
 using static DiscordWard.Plugin;
 
 namespace DiscordWard;
 
 public static class Helper
 {
+    public static Player NearestPlayerInRange(PrivateArea to)
+    {
+        Player current = null;
+        float oldDistance = to.m_radius;
+        foreach (Player o in Player.m_players)
+        {
+            if (!o) continue;
+            float dist = Vector3.Distance(to.transform.position, o.transform.position);
+            if (dist < oldDistance)
+            {
+                current = o;
+                oldDistance = dist;
+            }
+        }
+
+        return current;
+    }
+    public static bool NameOfNearestPlayerInRange(PrivateArea to, out string name)
+    {
+        name = "--none--";
+        Player current = null;
+        float oldDistance = to.m_radius;
+        foreach (Player o in Player.m_players)
+        {
+            if (!o) continue;
+            float dist = Vector3.Distance(to.transform.position, o.transform.position);
+            if (dist < oldDistance)
+            {
+                current = o;
+                oldDistance = dist;
+            }
+        }
+        if (current)
+        {
+            name = current.GetPlayerName();
+            return true;
+        }
+        return false;
+    }
+
     public static bool GetAreaOwnerName(PrivateArea area, out string ownerName)
     {
         ownerName = "-none-";

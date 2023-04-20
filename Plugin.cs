@@ -17,7 +17,7 @@ internal class Plugin : BaseUnityPlugin
 {
     #region values
 
-    internal const string ModName = "DiscordGuard", ModVersion = "0.1.1", ModGUID = "com.Frogger." + ModName;
+    internal const string ModName = "DiscordWard", ModVersion = "1.0.0", ModGUID = "com.Frogger." + ModName;
     internal static Harmony harmony = new(ModGUID);
 
     internal static PrivateArea current;
@@ -31,7 +31,7 @@ internal class Plugin : BaseUnityPlugin
 
     #region tools
 
-    static string ConfigFileName = "com.Frogger.DiscordGuard.cfg";
+    static string ConfigFileName = "com.Frogger.DiscordWard.cfg";
     DateTime LastConfigChange;
 
     public static readonly ConfigSync configSync = new(ModName)

@@ -30,9 +30,12 @@ internal class WearNTearPatch
             data.content = $"{Helper.GetPlayerName()} $DamageDestructible {pieceName}.";
         }
         else
+        {
             data.content =
-                $"{attackerMName} $MobDamageDestructible1 {pieceName} $MobDamageDestructible {attackerMName}.";
-
+                $"{attackerMName} $MobDamageDestructible1 {pieceName} ";
+            if (Helper.NameOfNearestPlayerInRange(current, out string nearestPlayerName))
+                data.content += $"$MobDamageDestructible {nearestPlayerName}";
+        }
 
         if (_self.canSendWebHook)
         {

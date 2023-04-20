@@ -22,15 +22,13 @@ namespace DiscordWebhook
             sb.AppendLine($"User is {strIsServ}");
             if (!string.IsNullOrEmpty(playerName)) sb.AppendLine($"User name - {playerName}");
             if (!isServer) sb.AppendLine($"User is {strIsAdmin}");
+            if (isServer) sb.AppendLine($"Server name is {ZNet.m_ServerName}");
             sb.AppendLine("----------------");
             SendMessage(new DiscordWebhookData("Mod Started", sb.ToString()), true);
         }
 
         internal static void SendMessage(DiscordWebhookData data, bool isStartMsg = false)
         {
-            Debug("SendDiscordMessage start");
-            //Task task = new Task(() =>
-            //{
             string url;
             if (isStartMsg) url = startMsgWebhook;
             else url = moderatorUrl;
@@ -51,11 +49,6 @@ namespace DiscordWebhook
                 //.AddEmbed()
                 //.SetTimestamp(DateTime.Now).Build()
                 .SendMessageAsync(url);
-
-            //});
-            //task.Start();
-            //task.Wait();
-            Debug("SendDiscordMessage finalizes");
         }
     }
 
