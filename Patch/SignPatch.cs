@@ -8,11 +8,11 @@ using static DiscordWard.Plugin;
 namespace DiscordWard;
 
 [HarmonyPatch]
-internal class DoorPatch
+internal class SignPatch
 {
-    [HarmonyPatch(typeof(Door), nameof(Door.Interact)), HarmonyPostfix]
-    public static void DoorPatchInteract(Door __instance, bool hold)
+    [HarmonyPatch(typeof(Sign), nameof(Sign.Interact)), HarmonyPostfix]
+    public static void SignPatchInteract(Sign __instance, bool hold)
     {
-        Helper.SimplePatch("$Door", hold);
+        Helper.SimplePatch("$Sign", hold);
     }
 }

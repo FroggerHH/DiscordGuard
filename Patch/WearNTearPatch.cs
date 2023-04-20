@@ -3,9 +3,9 @@ using DiscordWebhook;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static DiscordGuard.Plugin;
+using static DiscordWard.Plugin;
 
-namespace DiscordGuard;
+namespace DiscordWard;
 
 [HarmonyPatch]
 internal class WearNTearPatch
@@ -19,7 +19,7 @@ internal class WearNTearPatch
         string attackerMName = attacker.GetHoverName();
 
         string pieceName = __instance.m_piece.m_name;
-        bool flag = Helper.CheckAccess();
+        bool flag = Helper.CheckAccess(out _);
         if (flag) return;
 
         DiscordWebhookData data = new($"$Guard {creatorName}", $"");
@@ -29,7 +29,9 @@ internal class WearNTearPatch
         {
             data.content = $"{Helper.GetPlayerName()} $DamageDestructible {pieceName}.";
         }
-        else data.content = $"{attackerMName} $MobDamageDestructible1 {pieceName} $MobDamageDestructible {attackerMName}.";
+        else
+            data.content =
+                $"{attackerMName} $MobDamageDestructible1 {pieceName} $MobDamageDestructible {attackerMName}.";
 
 
         if (_self.canSendWebHook)
@@ -44,7 +46,7 @@ internal class WearNTearPatch
         if (!Helper.GetCurrentAreaOwnerName(out string creatorName)) return;
 
         string pieceName = __instance.m_piece.m_name;
-        bool flag = Helper.CheckAccess();
+        bool flag = Helper.CheckAccess(out _);
         if (flag || Utils.DistanceXZ(Player.m_localPlayer.transform.position, __instance.transform.position) > 5)
             return; //TODO: Destroy detonation range
         string playerName = Helper.GetPlayerName();

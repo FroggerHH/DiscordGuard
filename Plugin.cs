@@ -10,14 +10,14 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-namespace DiscordGuard;
+namespace DiscordWard;
 
 [BepInPlugin(ModGUID, ModName, ModVersion)]
 internal class Plugin : BaseUnityPlugin
 {
     #region values
 
-    internal const string ModName = "DiscordGuard", ModVersion = "0.1.0", ModGUID = "com.Frogger." + ModName;
+    internal const string ModName = "DiscordGuard", ModVersion = "0.1.1", ModGUID = "com.Frogger." + ModName;
     internal static Harmony harmony = new(ModGUID);
 
     internal static PrivateArea current;
@@ -252,9 +252,22 @@ internal class Plugin : BaseUnityPlugin
         InvokeRepeating(nameof(UdateCurrentPrivateZone), 3, 3);
         InvokeRepeating(nameof(EnterLeftGuard), 3, 3);
 
+        harmony.PatchAll(typeof(AutoPickupPatch));
+        harmony.PatchAll(typeof(BeehivePatch));
+        harmony.PatchAll(typeof(ChairPatch));
+        harmony.PatchAll(typeof(ContainerPatch));
+        harmony.PatchAll(typeof(CraftingStationPatch));
         harmony.PatchAll(typeof(DoorPatch));
-        harmony.PatchAll(typeof(ZNetSceneStartPatch));
+        harmony.PatchAll(typeof(FireplacePatch));
+        harmony.PatchAll(typeof(ItemDropPatch));
+        harmony.PatchAll(typeof(ItemStandPatch));
+        harmony.PatchAll(typeof(MapTablePatch));
+        harmony.PatchAll(typeof(PickableObjectPatch));
+        harmony.PatchAll(typeof(SignPatch));
+        harmony.PatchAll(typeof(TeleportPatch));
+        harmony.PatchAll(typeof(WardPatch));
         harmony.PatchAll(typeof(WearNTearPatch));
+        harmony.PatchAll(typeof(ZNetSceneStartPatch));
     }
 
     private void UdateCurrentPrivateZone()
@@ -290,7 +303,12 @@ internal class Plugin : BaseUnityPlugin
         var playerName = Helper.GetPlayerName();
         DiscordWebhookData data = new($"{creatorName} $Guard", $"{playerName} ");
 
-        bool flag = Helper.CheckAccess();
+        bool flag = Helper.CheckAccess(out bool isOwner);
+        if (isOwner)
+        {
+            inZone = false;
+            return;
+        }
         if (flag)
         {
             if (!inZone) return;

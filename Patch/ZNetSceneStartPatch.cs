@@ -3,9 +3,9 @@ using DiscordWebhook;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static DiscordGuard.Plugin;
+using static DiscordWard.Plugin;
 
-namespace DiscordGuard
+namespace DiscordWard
 {
     [HarmonyPatch]
     internal class ZNetSceneStartPatch

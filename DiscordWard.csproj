@@ -7,8 +7,8 @@
         <ProjectGuid>{46BDCABE-BEB1-491F-8631-310F5186A3DB}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>DiscordGuard</RootNamespace>
-        <AssemblyName>DiscordGuard</AssemblyName>
+        <RootNamespace>DiscordWard</RootNamespace>
+        <AssemblyName>DiscordWard</AssemblyName>
         <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -76,6 +76,19 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Patch\AutoPickupPatch.cs" />
+        <Compile Include="Patch\BeehivePatch.cs" />
+        <Compile Include="Patch\ChairPatch.cs" />
+        <Compile Include="Patch\ContainerPatch.cs" />
+        <Compile Include="Patch\CraftingStationPatch.cs" />
+        <Compile Include="Patch\FireplacePatch.cs" />
+        <Compile Include="Patch\ItemDropPatch.cs" />
+        <Compile Include="Patch\ItemStandPatch.cs" />
+        <Compile Include="Patch\MapTablePatch.cs" />
+        <Compile Include="Patch\PickableObjectPatch.cs" />
+        <Compile Include="Patch\SignPatch.cs" />
+        <Compile Include="Patch\TeleportPatch.cs" />
+        <Compile Include="Patch\WardPatch.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Discord.cs" />
         <Compile Include="ConfigurationManagerAttributes.cs" />

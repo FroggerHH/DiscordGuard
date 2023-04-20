@@ -2,7 +2,7 @@
 using System.Text;
 using System.Threading.Tasks;
 using DiscordMessenger;
-using static DiscordGuard.Plugin;
+using static DiscordWard.Plugin;
 
 namespace DiscordWebhook
 {
@@ -14,12 +14,13 @@ namespace DiscordWebhook
         public static void SendStartMessage()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"Mod version - {ModVersion}");
             var isServer = ZNet.instance.IsServer();
             string strIsServ = isServer == true ? "Server" : "Client";
             string strIsAdmin = configSync.IsAdmin == true ? "Admin" : "Player";
+            string playerName = Game.instance.GetPlayerProfile().GetName();
+            sb.AppendLine($"Mod version - {ModVersion}");
             sb.AppendLine($"User is {strIsServ}");
-            if (!isServer) sb.AppendLine($"User name - {Game.instance.GetPlayerProfile().GetName()}");
+            if (!string.IsNullOrEmpty(playerName)) sb.AppendLine($"User name - {playerName}");
             if (!isServer) sb.AppendLine($"User is {strIsAdmin}");
             sb.AppendLine("----------------");
             SendMessage(new DiscordWebhookData("Mod Started", sb.ToString()), true);
@@ -30,27 +31,27 @@ namespace DiscordWebhook
             Debug("SendDiscordMessage start");
             //Task task = new Task(() =>
             //{
-                string url;
-                if (isStartMsg) url = startMsgWebhook;
-                else url = moderatorUrl;
-                if (string.IsNullOrEmpty(url) || string.IsNullOrWhiteSpace(url))
-                {
-                    _self.DebugError("url is EMPTY", false);
-                    return;
-                }
+            string url;
+            if (isStartMsg) url = startMsgWebhook;
+            else url = moderatorUrl;
+            if (string.IsNullOrEmpty(url) || string.IsNullOrWhiteSpace(url))
+            {
+                _self.DebugError("url is EMPTY", false);
+                return;
+            }
 
-                data.username = Localization.instance.Localize(data.username);
-                data.content = Localization.instance.Localize(data.content);
+            data.username = Localization.instance.Localize(data.username);
+            data.content = Localization.instance.Localize(data.content);
 
-                new DiscordMessage()
-                    .SetUsername(data.username)
-                    .SetContent(data.content)
-                    .SetAvatar(
-                        "https://gcdn.thunderstore.io/live/repository/icons/Frogger-DiscordGuard-0.0.17.png.128x128_q95.png")
-                    //.AddEmbed()
-                    //.SetTimestamp(DateTime.Now).Build()
-                    .SendMessageAsync(url);
-                
+            new DiscordMessage()
+                .SetUsername(data.username)
+                .SetContent(data.content)
+                .SetAvatar(
+                    "https://gcdn.thunderstore.io/live/repository/icons/Frogger-DiscordGuard-0.0.17.png.128x128_q95.png")
+                //.AddEmbed()
+                //.SetTimestamp(DateTime.Now).Build()
+                .SendMessageAsync(url);
+
             //});
             //task.Start();
             //task.Wait();

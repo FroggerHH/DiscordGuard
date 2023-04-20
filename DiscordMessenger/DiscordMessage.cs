@@ -5,7 +5,7 @@ using System.Net;
 using HarmonyLib;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
-using static DiscordGuard.Plugin;
+using static DiscordWard.Plugin;
 
 namespace DiscordMessenger;
 
