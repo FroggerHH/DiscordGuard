@@ -17,7 +17,7 @@ internal class Plugin : BaseUnityPlugin
 {
     #region values
 
-    internal const string ModName = "DiscordWard", ModVersion = "1.0.0", ModGUID = "com.Frogger." + ModName;
+    internal const string ModName = "DiscordWard", ModVersion = "1.0.1", ModGUID = "com.Frogger." + ModName;
     internal static Harmony harmony = new(ModGUID);
 
     internal static PrivateArea current;
@@ -217,7 +217,7 @@ internal class Plugin : BaseUnityPlugin
 
         moderatorUrlConfig = config("Urls", "moderatorUrl", "",
             new ConfigDescription("Url of the moderator's webhook", null,
-                new ConfigurationManagerAttributes { HideSettingName = true, HideDefaultButton = true }), true);
+                new ConfigurationManagerAttributes { HideSettingName = true, HideDefaultButton = true, Browsable = false }), true);
         // logrUrlConfig = config("Urls", "logrUrl", "",
         //     new ConfigDescription(
         //         "It differs in that all messages come here, both from the actions of players on foreign shores and in their own.",
