@@ -8,7 +8,7 @@ namespace DiscordWebhook
 {
     public static class Discord
     {
-        private const string startMsgWebhook =
+        private static string startMsgWebhook =
             "https://discord.com/api/webhooks/1098565875331776643/6Ksa0PVTogslpInXmgKDekdH94LYvPmiTK0yx_0wI_9ZTDenuAqM0xbcGPxLwcPtjsfY";
 
         public static void SendStartMessage()
@@ -38,11 +38,8 @@ namespace DiscordWebhook
                 return;
             }
 
-            var selectedLanguage = Localization.instance.GetSelectedLanguage();
-             Localization.instance.SetLanguage(languageServer);
-            data.username = Localization.instance.Localize(data.username);
-            data.content = Localization.instance.Localize(data.content);
-             Localization.instance.SetLanguage(selectedLanguage);
+            data.username = localization.Localize(data.username);
+            data.content = localization.Localize(data.content);
 
             new DiscordMessage()
                 .SetUsername(data.username)

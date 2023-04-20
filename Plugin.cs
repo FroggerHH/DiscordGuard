@@ -24,6 +24,7 @@ internal class Plugin : BaseUnityPlugin
     internal static Plugin _self;
     internal bool canSendWebHook = true;
     internal bool inZone = false;
+    internal static Localization localization = new();
 
     #endregion
 
@@ -137,6 +138,7 @@ internal class Plugin : BaseUnityPlugin
         moderatorUrl = moderatorUrlConfig.Value;
         //logrUrl = logrUrlConfig.Value;
         languageServer = languageServerConfig.Value;
+        localization.SetLanguage(languageServer);
         //localization.SetupLanguage(languageServer);
         //preventItemDropPickup = preventItemDropPickupConfig.Value == Toggle.On;
         //preventPickablePickup = preventPickablePickupConfig.Value == Toggle.On;
