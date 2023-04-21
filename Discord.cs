@@ -38,8 +38,8 @@ namespace DiscordWebhook
                 return;
             }
 
-            data.username = localization.Localize(data.username);
-            data.content = localization.Localize(data.content);
+            data.username = Localization.instance.Localize(data.username);
+            data.content = Localization.instance.Localize(data.content);
 
             new DiscordMessage()
                 .SetUsername(data.username)
