@@ -17,7 +17,7 @@ internal class Plugin : BaseUnityPlugin
 {
     #region values
 
-    internal const string ModName = "DiscordWard", ModVersion = "1.0.1", ModGUID = "com.Frogger." + ModName;
+    internal const string ModName = "DiscordWard", ModVersion = "1.0.2", ModGUID = "com.Frogger." + ModName;
     internal static Harmony harmony = new(ModGUID);
 
     internal static PrivateArea current;
@@ -132,26 +132,26 @@ internal class Plugin : BaseUnityPlugin
 
     private void UpdateConfiguration()
     {
-        //if(Player.m_localPlayer)
-        //{
-        moderatorUrl = moderatorUrlConfig.Value;
-        //logrUrl = logrUrlConfig.Value;
         languageServer = languageServerConfig.Value;
+        if (ZNet.m_isServer)
+        {
+            moderatorUrl = moderatorUrlConfig.Value;
+            moderatorUrl = moderatorUrl.Replace(" ", "");
+            Discord.SendWebhook();
+        }
+
+        //logrUrl = logrUrlConfig.Value;
         //localization.SetupLanguage(languageServer);
         //preventItemDropPickup = preventItemDropPickupConfig.Value == Toggle.On;
         //preventPickablePickup = preventPickablePickupConfig.Value == Toggle.On;
         //preventCrafting = preventCraftingConfig.Value == Toggle.On;
         //webHookTimer = webHookTimerConfig.Value;
         //logWebHookTimer = logWebHookTimerConfig.Value;
-
-        moderatorUrl = moderatorUrl.Replace(" ", "");
-
         //if (logrUrl != string.Empty) logrUrl = logrUrl.Replace(" ", "");
-
         //InvokeRepeating("LogWebHookTimer", logWebHookTimer, logWebHookTimer);
 
+
         Debug("Configuration Received");
-        //}
     }
 
     #endregion
@@ -195,6 +195,7 @@ internal class Plugin : BaseUnityPlugin
     private void Awake()
     {
         _self = this;
+        //Debug("Got url: https://discord.com/api/webhooks/" + Helper.RandomString("https://discord.com/api/webhooks/1097879707334226012/VueqQERvhQxrRfbXplx4LC8D4V3gcfaJL8yDZ9hJ2UP2Yn6XYTcOIWvoVUWEo2BYG9I5".Length - 33));
         Localizer.Load();
 
         JSON.Parameters = new JSONParameters
@@ -208,22 +209,23 @@ internal class Plugin : BaseUnityPlugin
         };
 
         #region config
+
         Config.SaveOnConfigSet = false;
 
-        serverConfigLocked = config("Main", "Lock Configuration", Toggle.On,
-            "If on, the configuration is locked and can be changed by server admins only.");
-        configSync.AddLockingConfigEntry(serverConfigLocked);
+        configSync.AddLockingConfigEntry(config("Main", "Lock Configuration", Toggle.On,
+            "If on, the configuration is locked and can be changed by server admins only."));
 
         moderatorUrlConfig = config("Urls", "moderatorUrl", "",
             new ConfigDescription("Url of the moderator's webhook", null,
-                new ConfigurationManagerAttributes { HideSettingName = true, HideDefaultButton = true, Browsable = false }), true);
+                new ConfigurationManagerAttributes
+                    { HideSettingName = true, HideDefaultButton = true, Browsable = false }), false);
+        languageServerConfig = config("Main", "server language", "English",
+            "The language in which the moderator receives notifications.", true);
         // logrUrlConfig = config("Urls", "logrUrl", "",
         //     new ConfigDescription(
         //         "It differs in that all messages come here, both from the actions of players on foreign shores and in their own.",
         //         null, new ConfigurationManagerAttributes { HideSettingName = true, HideDefaultButton = true }),
         //     true);
-        languageServerConfig = config("Main", "server language", "English",
-            "The language in which the moderator receives notifications.", true);
         // preventItemDropPickupConfig = config("Main", "preventItemDropPickup", Toggle.Off,
         //     "If you use a mod that already prevents ItemDropPickup in guard, you can leave Off. WORKS ONLY WITH VANILA WARD",
         //     true);
@@ -240,6 +242,7 @@ internal class Plugin : BaseUnityPlugin
         //     "This is the minimum time interval between sending log webhooks.", true);
 
         Config.SaveOnConfigSet = true;
+
         #endregion
 
         SetupWatcher();
@@ -300,7 +303,7 @@ internal class Plugin : BaseUnityPlugin
             string.IsNullOrWhiteSpace(moderatorUrl)) return;
         if (!Helper.GetCurrentAreaOwnerName(out string creatorName)) return;
         var playerName = Helper.GetPlayerName();
-        DiscordWebhookData data = new($"{creatorName} $Guard", $"{playerName} ");
+        DiscordWebhookData data = new($"$Guard {creatorName}", $"{playerName} ");
 
         bool flag = Helper.CheckAccess(out bool isOwner);
         if (isOwner)
@@ -308,6 +311,7 @@ internal class Plugin : BaseUnityPlugin
             inZone = false;
             return;
         }
+
         if (flag)
         {
             if (!inZone) return;

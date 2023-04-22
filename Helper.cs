@@ -1,6 +1,9 @@
-﻿using DiscordWebhook;
+﻿using System.Linq;
+using System;
+using DiscordWebhook;
 using UnityEngine;
 using static DiscordWard.Plugin;
+using Random = System.Random;
 
 namespace DiscordWard;
 
@@ -102,10 +105,12 @@ public static class Helper
     public static void ItemDropPatch(bool hold, ItemDrop itemDrop)
     {
         if (hold) return;
+        var itemName = itemDrop.m_itemData.m_shared.m_name;
+        if (itemName.Contains("@") || itemName.Contains("attack")) return;
         string sendKey = "$ItemDropPickup";
         if (PatchCheck(ref sendKey, out var creatorName, out var playerName)) return;
         DiscordWebhookData data = new($"$Guard {creatorName}",
-            $"{playerName} {sendKey} {itemDrop.m_itemData.m_shared.m_name}");
+            $"{playerName} {sendKey} {itemName}");
         Discord.SendMessage(data);
     }
 
@@ -159,5 +164,13 @@ public static class Helper
         playerName = Helper.GetPlayerName();
         if (!sendKey.StartsWith("$")) sendKey = "$" + sendKey;
         return false;
+    }
+    
+    public static string RandomString(int length)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new Random();
+        var randomString = new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
+        return randomString;
     }
 }
