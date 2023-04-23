@@ -35,7 +35,7 @@ public static class Discord
         else url = moderatorUrl;
         if (string.IsNullOrEmpty(url) || string.IsNullOrWhiteSpace(url))
         {
-            _self.DebugError("url is EMPTY", false);
+            DebugError("url is EMPTY", false);
             return;
         }
 
@@ -60,8 +60,8 @@ public static class Discord
     }
     internal static void RPC_SendWebhook(long _, string url)
     {
-        Debug("Got url: https://discord.com/api/webhooks/" + Helper.RandomString(moderatorUrl.Length - 33)); //Debug fake url
         moderatorUrl = url;
+        Debug("Got url: https://discord.com/api/webhooks/" + Helper.RandomString(moderatorUrl.Length - 33)); //Debug fake url
     }
     internal static void RecuestWebhook()
     {

@@ -168,6 +168,15 @@ public static class Helper
     
     public static string RandomString(int length)
     {
+        try
+        {
+
+        }
+        catch (Exception e)
+        {
+            DebugError(e.Message, true);
+            throw;
+        }
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         Random random = new Random();
         var randomString = new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());

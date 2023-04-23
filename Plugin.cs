@@ -17,7 +17,7 @@ internal class Plugin : BaseUnityPlugin
 {
     #region values
 
-    internal const string ModName = "DiscordWard", ModVersion = "1.0.2", ModGUID = "com.Frogger." + ModName;
+    internal const string ModName = "DiscordWard", ModVersion = "1.0.3", ModGUID = "com.Frogger." + ModName;
     internal static Harmony harmony = new(ModGUID);
 
     internal static PrivateArea current;
@@ -170,24 +170,24 @@ internal class Plugin : BaseUnityPlugin
         }
     }
 
-    public void DebugError(string msg, bool showWriteToDev)
+    public static void DebugError(string msg, bool showWriteToDev)
     {
         if (showWriteToDev)
         {
             msg += "Write to the developer and moderator if this happens often.";
         }
 
-        Logger.LogError(msg);
+        _self.Logger.LogError(msg);
     }
 
-    public void DebugWarning(string msg, bool showWriteToDev)
+    public static void DebugWarning(string msg, bool showWriteToDev)
     {
         if (showWriteToDev)
         {
             msg += "Write to the developer and moderator if this happens often.";
         }
 
-        Logger.LogWarning(msg);
+        _self.Logger.LogWarning(msg);
     }
 
     #endregion
@@ -195,7 +195,6 @@ internal class Plugin : BaseUnityPlugin
     private void Awake()
     {
         _self = this;
-        //Debug("Got url: https://discord.com/api/webhooks/" + Helper.RandomString("https://discord.com/api/webhooks/1097879707334226012/VueqQERvhQxrRfbXplx4LC8D4V3gcfaJL8yDZ9hJ2UP2Yn6XYTcOIWvoVUWEo2BYG9I5".Length - 33));
         Localizer.Load();
 
         JSON.Parameters = new JSONParameters

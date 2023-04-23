@@ -93,7 +93,7 @@ public class DiscordMessage
         }
         else
         {
-            _self.DebugError("Failed to serialize yaml object", true);
+            DebugError("Failed to serialize yaml object", true);
         }
     }
 
