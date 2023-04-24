@@ -76,20 +76,20 @@ public static class Helper
     public static bool GetCurrentAreaOwnerName(out string ownerName)
     {
         if (CurrentVANILAAreaOwnerName(out ownerName)) return true;
-        if (GetCurrentZoneOwnerName(out ownerName)) return true;
+        if (GetCurrentZoneName(out ownerName)) return true;
 
         return false;
     }
 
-    private static bool GetCurrentZoneOwnerName(out string ownerName)
+    private static bool GetCurrentZoneName(out string territoryName)
     {
-        ownerName = "-none-";
+        territoryName = "-none-";
         if (!Marketplace_API.IsInstalled()) return false;
         var territory = GetCurrentTerritory();
         if (territory == null) return false;
-        ownerName = territory.Owners;
+        territoryName = territory.RawName();
 
-        if (ownerName == "-none-") return false;
+        if (territoryName == "-none-") return false;
         return true;
     }
 
@@ -124,7 +124,7 @@ public static class Helper
 
         var territory = GetCurrentTerritory();
         if (territory == null) return true;
-        isOwner = territory.IsOwner();
+        //isOwner = territory.IsOwner();
         return isOwner;
     }
 
