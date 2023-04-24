@@ -11,8 +11,8 @@ namespace DiscordWard;
 internal class SignPatch
 {
     [HarmonyPatch(typeof(Sign), nameof(Sign.Interact)), HarmonyPostfix]
-    public static void SignPatchInteract(Sign __instance, bool hold, Humanoid human)
+    public static void SignPatchInteract(Sign __instance, bool hold, Humanoid character)
     {
-        Helper.SimplePatch("$Sign", hold, human as Player);
+        Helper.SimplePatch("$Sign", hold, character as Player);
     }
 }
