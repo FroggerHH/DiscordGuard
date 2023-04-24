@@ -11,8 +11,8 @@ namespace DiscordWard;
 internal class ItemStandPatch
 {
     [HarmonyPatch(typeof(ItemStand), nameof(ItemStand.Interact)), HarmonyPostfix]
-    public static void ItemStandPatchInteract(ItemStand __instance, bool hold)
+    public static void ItemStandPatchInteract(ItemStand __instance, bool hold, Humanoid user)
     {
-        Helper.SimplePatch("$ItemStand", hold);
+        Helper.SimplePatch("$ItemStand", hold, user as Player);
     }
 }

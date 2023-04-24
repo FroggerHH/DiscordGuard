@@ -11,8 +11,8 @@ namespace DiscordWard;
 internal class BeehivePatch
 {
     [HarmonyPatch(typeof(Beehive), nameof(Beehive.Interact)), HarmonyPostfix]
-    public static void BeehivePatchInteract(Beehive __instance, bool repeat)
+    public static void BeehivePatchInteract(Beehive __instance, bool repeat, Humanoid character)
     {
-        Helper.SimplePatch("$Honey", repeat);
+        Helper.SimplePatch("$Honey", repeat, character as Player);
     }
 }

@@ -11,9 +11,9 @@ namespace DiscordWard;
 internal class TeleportPatch
 {
     [HarmonyPatch(typeof(TeleportWorld), nameof(TeleportWorld.Interact)), HarmonyPostfix]
-    public static void TeleporEditTagPatch(TeleportWorld __instance, bool hold)
+    public static void TeleporEditTagPatch(TeleportWorld __instance, bool hold, Humanoid human)
     {
-        Helper.SimplePatch("$TeleportInteract", hold);
+        Helper.SimplePatch("$TeleportInteract", hold, human as Player);
     }
 
     [HarmonyPatch(typeof(TeleportWorld), nameof(TeleportWorld.Teleport)), HarmonyPostfix]

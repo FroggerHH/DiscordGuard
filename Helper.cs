@@ -75,8 +75,8 @@ public static class Helper
 
     public static bool GetCurrentAreaOwnerName(out string ownerName)
     {
-        if (CurrentVANILAAreaOwnerName(out ownerName)) return true;
         if (GetCurrentZoneName(out ownerName)) return true;
+        if (CurrentVANILAAreaOwnerName(out ownerName)) return true;
 
         return false;
     }
@@ -88,7 +88,6 @@ public static class Helper
         var territory = GetCurrentTerritory();
         if (territory == null) return false;
         territoryName = territory.RawName();
-
         if (territoryName == "-none-") return false;
         return true;
     }
@@ -119,56 +118,63 @@ public static class Helper
         {
             isOwner = current.m_piece.IsCreator();
             bool access = PrivateArea.CheckAccess(Player.m_localPlayer.transform.position, 0f, false, true);
-            if (!access) return false;
+            if (!access)
+            {
+                lastPrivateType = PrivateType.Ward;
+                lastPrivateName = current.m_nview.GetZDO().GetString("creatorName");
+                return false;
+            }
         }
 
         var territory = GetCurrentTerritory();
         if (territory == null) return true;
-        //isOwner = territory.IsOwner();
-        return isOwner;
+        lastPrivateType = PrivateType.Zone;
+        lastPrivateName = territory.RawName();
+        var ownerTerrit = territory.IsOwner();
+        return ownerTerrit;
     }
 
     private static Territory GetCurrentTerritory()
     {
-        return Territory.GetCurrentTerritory(Player.m_localPlayer.transform.position);
+        return TerritorySystem_Main_Client.CurrentTerritory;
     }
 
-    public static void SimplePatch(string sendKey, bool hold)
+    public static void SimplePatch(string sendKey, bool hold, Player player)
     {
         if (hold) return;
-        if (PatchCheck(ref sendKey, out var creatorName, out var playerName)) return;
-        DiscordWebhookData data = new($"$Guard {creatorName}", $"{playerName} {sendKey}");
+        if (PatchCheck(ref sendKey, out var creatorName, out var playerName, player)) return;
+        DiscordWebhookData data = new(creatorName, $"{playerName} {sendKey}");
         Discord.SendMessage(data);
     }
 
-    public static void PiecePatch(string sendKey, bool hold, Piece sendPiece)
+    public static void PiecePatch(string sendKey, bool hold, Piece sendPiece, Player player)
     {
         if (hold) return;
-        if (PatchCheck(ref sendKey, out var creatorName, out var playerName)) return;
-        DiscordWebhookData data = new($"$Guard {creatorName}", $"{playerName} {sendKey} {sendPiece.m_name}");
+        if (PatchCheck(ref sendKey, out var creatorName, out var playerName, player)) return;
+        DiscordWebhookData data = new(creatorName, $"{playerName} {sendKey} {sendPiece.m_name}");
         Discord.SendMessage(data);
     }
 
-    public static void ItemDropPatch(bool hold, ItemDrop itemDrop)
+    public static void ItemDropPatch(bool hold, ItemDrop itemDrop, Player player)
     {
         if (hold) return;
         var itemName = itemDrop.m_itemData.m_shared.m_name;
         if (itemName.Contains("@") || itemName.Contains("attack")) return;
         string sendKey = "$ItemDropPickup";
-        if (PatchCheck(ref sendKey, out var creatorName, out var playerName)) return;
-        DiscordWebhookData data = new($"$Guard {creatorName}",
+        if (PatchCheck(ref sendKey, out var creatorName, out var playerName, player)) return;
+        DiscordWebhookData data = new(creatorName,
             $"{playerName} {sendKey} {itemName}");
         Discord.SendMessage(data);
     }
 
-    public static void PickablePatch(bool hold, Pickable pickable)
+    public static void PickablePatch(bool hold, Pickable pickable, Player player)
     {
         if (hold) return;
         var itemDrop = pickable.m_itemPrefab.GetComponent<ItemDrop>();
         if (!itemDrop) return;
         string sendKey = "$Pickable";
-        if (PatchCheck(ref sendKey, out var creatorName, out var playerName)) return;
-        DiscordWebhookData data = new($"$Guard {creatorName}",
+        if (PatchCheck(ref sendKey, out var creatorName, out var playerName, player)) return;
+        DiscordWebhookData data = new(creatorName,
             $"{playerName} {sendKey} {itemDrop.m_itemData.m_shared.m_name}");
         Discord.SendMessage(data);
     }
@@ -177,39 +183,43 @@ public static class Helper
     {
         if (!player) return;
         string sendKey = "$Teleport";
-        if (PatchCheck(ref sendKey, out var creatorName, out var playerName)) return;
-        DiscordWebhookData data = new($"$Guard {creatorName}", $"{playerName} {sendKey} {teleportWorld.GetText()}");
+        if (PatchCheck(ref sendKey, out var creatorName, out var playerName, player)) return;
+        DiscordWebhookData data = new(creatorName, $"{playerName} {sendKey} {teleportWorld.GetText()}");
         Discord.SendMessage(data);
     }
 
-    public static void FireplacePatch(bool hold, Fireplace fireplace)
+    public static void FireplacePatch(bool hold, Fireplace fireplace, Player player)
     {
         if (hold) return;
         string sendKey = "$FireplaceFill";
-        if (PatchCheck(ref sendKey, out var creatorName, out var playerName)) return;
-        DiscordWebhookData data = new($"$Guard {creatorName}", $"{playerName} {sendKey} {fireplace.m_name}");
+        if (PatchCheck(ref sendKey, out var creatorName, out var playerName, player)) return;
+        DiscordWebhookData data = new(creatorName, $"{playerName} {sendKey} {fireplace.m_name}");
         Discord.SendMessage(data);
     }
 
-    public static void ChairPatch(bool hold, Chair chair)
+    public static void ChairPatch(bool hold, Chair chair, Player player)
     {
         if (hold) return;
         string sendKey = "$Chair";
-        if (PatchCheck(ref sendKey, out var creatorName, out var playerName)) return;
-        DiscordWebhookData data = new($"$Guard {creatorName}", $"{playerName} {sendKey} {chair.m_name}");
+        if (PatchCheck(ref sendKey, out var creatorName, out var playerName, player)) return;
+        DiscordWebhookData data = new(creatorName, $"{playerName} {sendKey} {chair.m_name}");
         Discord.SendMessage(data);
     }
 
-    private static bool PatchCheck(ref string sendKey, out string creatorName, out string playerName)
+    private static bool PatchCheck(ref string sendKey, out string username, out string playerName, Player player)
     {
-        creatorName = "-none-";
+        username = "-none-";
         playerName = "-none-";
+        if(player == null) return false;
+        if(player != Player.m_localPlayer) return false;
         if (!_self.canSendWebHook) return true;
-        if (!Helper.GetCurrentAreaOwnerName(out creatorName)) return true;
+        if (!Helper.GetCurrentAreaOwnerName(out username)) return true;
         bool flag = Helper.CheckAccess(out _);
         if (flag) return true;
-        playerName = Helper.GetPlayerName();
+        playerName = player.GetPlayerName();
         if (!sendKey.StartsWith("$")) sendKey = "$" + sendKey;
+        username = lastPrivateType == PrivateType.Ward ? $"$Guard {username}" : $"$Zone {username}";
+
         return false;
     }
 

@@ -11,8 +11,8 @@ namespace DiscordWard;
 internal class DoorPatch
 {
     [HarmonyPatch(typeof(Door), nameof(Door.Interact)), HarmonyPostfix]
-    public static void DoorPatchInteract(Door __instance, bool hold)
+    public static void DoorPatchInteract(Door __instance, bool hold, Humanoid character)
     {
-        Helper.SimplePatch("$Door", hold);
+        Helper.SimplePatch("$Door", hold, character as Player);
     }
 }

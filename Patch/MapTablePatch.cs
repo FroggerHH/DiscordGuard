@@ -11,13 +11,14 @@ namespace DiscordWard;
 internal class MapTablePatch
 {
     [HarmonyPatch(typeof(MapTable), nameof(MapTable.OnRead)), HarmonyPostfix]
-    public static void MapTableOnReadPatchOnRead(MapTable __instance)
+    public static void MapTableOnReadPatchOnRead(MapTable __instance, Humanoid user)
     {
-        Helper.SimplePatch("$MapTableRead", false);
+        Helper.SimplePatch("$MapTableRead", false, user as Player);
     }
+
     [HarmonyPatch(typeof(MapTable), nameof(MapTable.OnWrite)), HarmonyPostfix]
-    public static void MapTableOnReadPatchOnWrite(MapTable __instance)
+    public static void MapTableOnReadPatchOnWrite(MapTable __instance, Humanoid user)
     {
-        Helper.SimplePatch("$MapTableWrite", false);
+        Helper.SimplePatch("$MapTableWrite", false, user as Player);
     }
 }

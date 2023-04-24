@@ -11,8 +11,8 @@ namespace DiscordWard;
 internal class ItemDropPatch
 {
     [HarmonyPatch(typeof(ItemDrop), nameof(ItemDrop.Interact)), HarmonyPostfix]
-    public static void ItemDropPatchInteract(ItemDrop __instance, bool repeat)
+    public static void ItemDropPatchInteract(ItemDrop __instance, bool repeat, Humanoid character)
     {
-        Helper.ItemDropPatch(repeat, __instance);
+        Helper.ItemDropPatch(repeat, __instance, character as Player);
     }
 }

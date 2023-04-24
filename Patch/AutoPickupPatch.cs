@@ -17,6 +17,6 @@ internal class AutoPickupPatch
         bool flag = !itemDrop || itemDrop.m_itemData == null || itemDrop.m_itemData.m_shared.m_icons == null || itemDrop.m_itemData.m_shared.m_icons.Length < 1;
         if(flag) return;
         
-        Helper.ItemDropPatch(false, itemDrop);
+        Helper.ItemDropPatch(false, itemDrop, __instance as Player);
     }
 }

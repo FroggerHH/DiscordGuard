@@ -11,8 +11,8 @@ namespace DiscordWard;
 internal class ChairPatch
 {
     [HarmonyPatch(typeof(Chair), nameof(Chair.Interact)), HarmonyPostfix]
-    public static void ChairPatchInteract(Chair __instance, bool hold)
+    public static void ChairPatchInteract(Chair __instance, bool hold, Humanoid human)
     {
-        Helper.ChairPatch(hold, __instance);
+        Helper.ChairPatch(hold, __instance, human as Player);
     }
 }

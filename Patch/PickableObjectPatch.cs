@@ -11,8 +11,8 @@ namespace DiscordWard;
 internal class PickableObjectPatch
 {
     [HarmonyPatch(typeof(Pickable), nameof(Pickable.Interact)), HarmonyPostfix]
-    public static void ItemDropPatchInteract(Pickable __instance, bool repeat)
+    public static void ItemDropPatchInteract(Pickable __instance, bool repeat, Humanoid human)
     {
-        Helper.PickablePatch(repeat, __instance);
+        Helper.PickablePatch(repeat, __instance, human as Player);
     }
 }

@@ -109,6 +109,7 @@
         <Compile Include="Patch\DoorPatch.cs" />
         <Compile Include="Patch\ZNetSceneStartPatch.cs" />
         <Compile Include="Patch\WearNTearPatch.cs" />
+        <Compile Include="PrivateType.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>

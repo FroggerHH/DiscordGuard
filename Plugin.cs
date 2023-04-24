@@ -21,6 +21,8 @@ internal class Plugin : BaseUnityPlugin
     internal static Harmony harmony = new(ModGUID);
 
     internal static PrivateArea current;
+    internal static string lastPrivateName;
+    internal static PrivateType lastPrivateType;
     internal static Plugin _self;
     internal bool canSendWebHook = true;
     internal bool inZone = false;
@@ -300,9 +302,9 @@ internal class Plugin : BaseUnityPlugin
         bool isFocused = Application.isFocused;
         if (!isFocused || !canSendWebHook || !Player.m_localPlayer || string.IsNullOrEmpty(moderatorUrl) ||
             string.IsNullOrWhiteSpace(moderatorUrl)) return;
-        if (!Helper.GetCurrentAreaOwnerName(out string creatorName)) return;
+        //if (!Helper.GetCurrentAreaOwnerName(out string creatorName)) return;
         var playerName = Helper.GetPlayerName();
-        DiscordWebhookData data = new($"$Guard {creatorName}", $"{playerName} ");
+        DiscordWebhookData data = new("", $"{playerName} ");
 
         bool flag = Helper.CheckAccess(out bool isOwner);
         if (isOwner)
@@ -315,7 +317,8 @@ internal class Plugin : BaseUnityPlugin
         {
             if (!inZone) return;
             inZone = false;
-            data.content += "$LeftGuard";
+            data.content += lastPrivateType == PrivateType.Ward ? "$LeftGuard" : "$LeftZone";
+            data.username += lastPrivateType == PrivateType.Ward ? $"$Guard {lastPrivateName}" : $"$Zone {lastPrivateName}";
             Discord.SendMessage(data);
             return;
         }
@@ -324,7 +327,8 @@ internal class Plugin : BaseUnityPlugin
         {
             if (inZone) return;
             inZone = true;
-            data.content += "$InGuard!";
+            data.content += lastPrivateType == PrivateType.Ward ? "$InGuard" : "$InZone";
+            data.username += lastPrivateType == PrivateType.Ward ? $"$Guard {lastPrivateName}" : $"$Zone {lastPrivateName}";
             Discord.SendMessage(data);
             return;
         }

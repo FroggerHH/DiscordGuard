@@ -11,8 +11,8 @@ namespace DiscordWard;
 internal class FireplacePatch
 {
     [HarmonyPatch(typeof(Fireplace), nameof(Fireplace.Interact)), HarmonyPostfix]
-    public static void FireplacePatchInteract(Fireplace __instance, bool hold)
+    public static void FireplacePatchInteract(Fireplace __instance, bool hold, Humanoid user)
     {
-        Helper.FireplacePatch(hold, __instance);
+        Helper.FireplacePatch(hold, __instance, user as Player);
     }
 }

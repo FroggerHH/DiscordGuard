@@ -11,8 +11,8 @@ namespace DiscordWard;
 internal class ContainerPatch
 {
     [HarmonyPatch(typeof(Container), nameof(Container.Interact)), HarmonyPostfix]
-    public static void ContainerPatchInteract(Beehive __instance, bool hold)
+    public static void ContainerPatchInteract(Beehive __instance, bool hold, Humanoid character)
     {
-        Helper.SimplePatch("$Chest", hold);
+        Helper.SimplePatch("$Chest", hold, character as Player);
     }
 }
