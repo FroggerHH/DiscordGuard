@@ -52,6 +52,9 @@
         <Reference Include="fastJSON">
           <HintPath>..\Utils\fastJSON.dll</HintPath>
         </Reference>
+        <Reference Include="kg.Marketplace">
+          <HintPath>..\Utils\kg.Marketplace.dll</HintPath>
+        </Reference>
         <Reference Include="LocalizationManager">
           <HintPath>..\Utils\LocalizationManager.dll</HintPath>
         </Reference>
@@ -76,6 +79,7 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Marketplace_API.cs" />
         <Compile Include="Patch\AutoPickupPatch.cs" />
         <Compile Include="Patch\BeehivePatch.cs" />
         <Compile Include="Patch\ChairPatch.cs" />

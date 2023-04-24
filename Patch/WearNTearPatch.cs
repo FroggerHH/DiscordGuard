@@ -33,7 +33,7 @@ internal class WearNTearPatch
         {
             data.content =
                 $"{attackerMName} $MobDamageDestructible1 {pieceName} ";
-            if (Helper.NameOfNearestPlayerInRange(current, out string nearestPlayerName))
+            if (Helper.NameOfNearestPlayerInRange(out string nearestPlayerName))
                 data.content += $"$MobDamageDestructible {nearestPlayerName}";
         }
 
