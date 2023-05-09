@@ -41,13 +41,13 @@ public static class Helper
             to = current.transform.position;
             range = current.m_radius;
         }
-        else
+        else if (Marketplace_API.IsInstalled())
         {
             var territory = Helper.GetCurrentTerritory();
             if (territory != null)
             {
-                to = territory.Pos3D();
-                range = territory.Radius;
+                to = (territory as Territory).Pos3D();
+                range = (territory as Territory).Radius;
             }
         }
 
@@ -75,8 +75,9 @@ public static class Helper
 
     public static bool GetCurrentAreaOwnerName(out string ownerName)
     {
-        if (GetCurrentZoneName(out ownerName)) return true;
         if (CurrentVANILAAreaOwnerName(out ownerName)) return true;
+        if (!Marketplace_API.IsInstalled()) return false;
+        if (GetCurrentZoneName(out ownerName)) return true;
 
         return false;
     }
@@ -87,7 +88,7 @@ public static class Helper
         if (!Marketplace_API.IsInstalled()) return false;
         var territory = GetCurrentTerritory();
         if (territory == null) return false;
-        territoryName = territory.RawName();
+        territoryName = (territory as Territory).RawName();
         if (territoryName == "-none-") return false;
         return true;
     }
@@ -126,16 +127,19 @@ public static class Helper
             }
         }
 
+        if (!Marketplace_API.IsInstalled()) return true;
+
         var territory = GetCurrentTerritory();
         if (territory == null) return true;
         lastPrivateType = PrivateType.Zone;
-        lastPrivateName = territory.RawName();
-        var ownerTerrit = territory.IsOwner();
+        lastPrivateName = (territory as Territory).RawName();
+        var ownerTerrit = (territory as Territory).IsOwner();
         return ownerTerrit;
     }
 
-    private static Territory GetCurrentTerritory()
+    private static object GetCurrentTerritory()
     {
+        if(!Marketplace_API.IsInstalled()) return null;
         return TerritorySystem_Main_Client.CurrentTerritory;
     }
 
@@ -210,8 +214,8 @@ public static class Helper
     {
         username = "-none-";
         playerName = "-none-";
-        if(player == null) return false;
-        if(player != Player.m_localPlayer) return false;
+        if (player == null) return false;
+        if (player != Player.m_localPlayer) return false;
         if (!_self.canSendWebHook) return true;
         if (!Helper.GetCurrentAreaOwnerName(out username)) return true;
         bool flag = Helper.CheckAccess(out _);

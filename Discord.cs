@@ -40,6 +40,8 @@ public static class Discord
         }
 
         data.username = Localization.instance.Localize(data.username);
+        if (data.content.Contains("VANILAGuardInteract")) data.content = Localization.instance.Localize(data.content);
+
         data.content = Localization.instance.Localize(data.content);
 
         new DiscordMessage()
@@ -54,24 +56,28 @@ public static class Discord
 
     internal static void SendWebhook()
     {
-        if(ZRoutedRpc.instance == null) return;
+        if (ZRoutedRpc.instance == null) return;
         ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, nameof(SendWebhook), moderatorUrl);
         Debug($"Sending webhook url from server {moderatorUrl}");
     }
+
     internal static void RPC_SendWebhook(long _, string url)
     {
         moderatorUrl = url;
-        Debug("Got url: https://discord.com/api/webhooks/" + Helper.RandomString(moderatorUrl.Length - 33)); //Debug fake url
+        Debug("Got url: https://discord.com/api/webhooks/" +
+              Helper.RandomString(moderatorUrl.Length - 33)); //Debug fake url
     }
+
     internal static void RecuestWebhook()
     {
-        if(ZRoutedRpc.instance == null) return;
+        if (ZRoutedRpc.instance == null) return;
         ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, nameof(RecuestWebhook));
         Debug($"Recuested webhook url from server");
     }
+
     internal static void RPC_RecuestWebhook(long _)
     {
-       if(ZNet.m_isServer) _self.Config.Reload();
+        if (ZNet.m_isServer) _self.Config.Reload();
     }
 }
 

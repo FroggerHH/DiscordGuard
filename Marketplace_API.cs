@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using Marketplace.Modules.TerritorySystem;
 using UnityEngine;
 
 namespace Market_API;
@@ -151,72 +150,5 @@ public static class Marketplace_API
         MI_IsObjectInsideTerritoryWithFlag_Additional = marketplaceAPI.GetMethod(
             "IsObjectInsideTerritoryWithFlag_Additional",
             BindingFlags.Public | BindingFlags.Static);
-    }
-}
-
-public static class ClientSide
-{
-    //Jere Expand World compatibility
-    public static bool FillingTerritoryData = false;
-
-
-    //territories
-    public static bool IsPlayerInsideTerritory(out string name, out int flags,
-        out int additionalFlags)
-    {
-        if (TerritorySystem_Main_Client.CurrentTerritory != null)
-        {
-            name = TerritorySystem_Main_Client.CurrentTerritory.Name;
-            flags = (int)TerritorySystem_Main_Client.CurrentTerritory.Flags;
-            additionalFlags = (int)TerritorySystem_Main_Client.CurrentTerritory.AdditionalFlags;
-            return true;
-        }
-
-        name = "";
-        flags = 0;
-        additionalFlags = 0;
-        return false;
-    }
-
-    public static bool IsObjectInsideTerritoryWithFlag(Vector3 pos, int flag,
-        out string name,
-        out int flags,
-        out int additionalFlags)
-    {
-        foreach (var territory in TerritorySystem_Main_Client.TerritoriesByFlags[
-                     (TerritorySystem_DataTypes.TerritoryFlags)flag])
-        {
-            if (!territory.IsInside(pos)) continue;
-            name = territory.Name;
-            flags = (int)territory.Flags;
-            additionalFlags = (int)territory.AdditionalFlags;
-            return true;
-        }
-
-        name = "";
-        flags = 0;
-        additionalFlags = 0;
-        return false;
-    }
-
-    public static bool IsObjectInsideTerritoryWithFlag_Additional(Vector3 pos, int flag,
-        out string name,
-        out int flags,
-        out int additionalFlags)
-    {
-        foreach (var territory in TerritorySystem_Main_Client.TerritoriesByFlags_Additional[
-                     (TerritorySystem_DataTypes.AdditionalTerritoryFlags)flag])
-        {
-            if (!territory.IsInside(pos)) continue;
-            name = territory.Name;
-            flags = (int)territory.Flags;
-            additionalFlags = (int)territory.AdditionalFlags;
-            return true;
-        }
-
-        name = "";
-        flags = 0;
-        additionalFlags = 0;
-        return false;
     }
 }

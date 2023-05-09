@@ -18,6 +18,7 @@ internal class WearNTearPatch
         if (!attacker) return;
         string attackerMName = attacker.GetHoverName();
 
+        if(!__instance.m_piece) return;
         string pieceName = __instance.m_piece.m_name;
         bool flag = Helper.CheckAccess(out _);
         if (flag) return;
