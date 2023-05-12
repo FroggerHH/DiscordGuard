@@ -136,19 +136,26 @@ public static class Marketplace_API
 
     static Marketplace_API()
     {
-        if (Type.GetType("API.ClientSide, kg.Marketplace") is not { } marketplaceAPI)
+        _IsInstalled = false;
+        try
+        {
+            if (Type.GetType("API.ClientSide, kg.Marketplace") is not { } marketplaceAPI)
+            {
+                return;
+            }
+
+            _IsInstalled = true;
+            MI_IsPlayerInsideTerritory = marketplaceAPI.GetMethod("IsPlayerInsideTerritory",
+                BindingFlags.Public | BindingFlags.Static);
+            MI_IsObjectInsideTerritoryWithFlag = marketplaceAPI.GetMethod("IsObjectInsideTerritoryWithFlag",
+                BindingFlags.Public | BindingFlags.Static);
+            MI_IsObjectInsideTerritoryWithFlag_Additional = marketplaceAPI.GetMethod(
+                "IsObjectInsideTerritoryWithFlag_Additional",
+                BindingFlags.Public | BindingFlags.Static);
+        }
+        catch (Exception e)
         {
             _IsInstalled = false;
-            return;
         }
-
-        _IsInstalled = true;
-        MI_IsPlayerInsideTerritory = marketplaceAPI.GetMethod("IsPlayerInsideTerritory",
-            BindingFlags.Public | BindingFlags.Static);
-        MI_IsObjectInsideTerritoryWithFlag = marketplaceAPI.GetMethod("IsObjectInsideTerritoryWithFlag",
-            BindingFlags.Public | BindingFlags.Static);
-        MI_IsObjectInsideTerritoryWithFlag_Additional = marketplaceAPI.GetMethod(
-            "IsObjectInsideTerritoryWithFlag_Additional",
-            BindingFlags.Public | BindingFlags.Static);
     }
 }

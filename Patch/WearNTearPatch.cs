@@ -13,17 +13,16 @@ internal class WearNTearPatch
     [HarmonyPatch(typeof(WearNTear), nameof(WearNTear.Damage)), HarmonyPostfix]
     static void WearNTearDamagePatch(WearNTear __instance, HitData hit)
     {
-        if (!Helper.GetCurrentAreaOwnerName(out string creatorName)) return;
         Character attacker = hit.GetAttacker();
         if (!attacker) return;
         string attackerMName = attacker.GetHoverName();
+        string sendKey = string.Empty;
+        if (Helper.PatchCheck(ref sendKey, out var username, out var _, Player.m_localPlayer)) return;
 
         if(!__instance.m_piece) return;
         string pieceName = __instance.m_piece.m_name;
-        bool flag = Helper.CheckAccess(out _);
-        if (flag) return;
 
-        DiscordWebhookData data = new($"$Guard {creatorName}", $"");
+        DiscordWebhookData data = new(username, $"");
 
 
         if (attacker.IsPlayer())

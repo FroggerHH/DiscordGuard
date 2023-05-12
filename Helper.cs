@@ -210,12 +210,12 @@ public static class Helper
         Discord.SendMessage(data);
     }
 
-    private static bool PatchCheck(ref string sendKey, out string username, out string playerName, Player player)
+    internal static bool PatchCheck(ref string sendKey, out string username, out string playerName, Player player)
     {
         username = "-none-";
         playerName = "-none-";
-        if (player == null) return false;
-        if (player != Player.m_localPlayer) return false;
+        if (player == null) return true;
+        if (player != Player.m_localPlayer) return true;
         if (!_self.canSendWebHook) return true;
         if (!Helper.GetCurrentAreaOwnerName(out username)) return true;
         bool flag = Helper.CheckAccess(out _);
