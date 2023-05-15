@@ -46,15 +46,13 @@ internal class WearNTearPatch
     [HarmonyPatch(typeof(WearNTear), nameof(WearNTear.Destroy)), HarmonyPostfix]
     static void WearNTearDestroyPatch(WearNTear __instance)
     {
-        if (!Helper.GetCurrentAreaOwnerName(out string creatorName)) return;
+        string sendKey = string.Empty;
+        if (Helper.PatchCheck(ref sendKey, out var username, out var playerName, Player.m_localPlayer)) return;
 
         string pieceName = __instance.m_piece.m_name;
-        bool flag = Helper.CheckAccess(out _);
-        if (flag || Utils.DistanceXZ(Player.m_localPlayer.transform.position, __instance.transform.position) > 5)
-            return; //TODO: Destroy detonation range
-        string playerName = Helper.GetPlayerName();
+        if (Utils.DistanceXZ(Player.m_localPlayer.transform.position, __instance.transform.position) > 5) return; //TODO: Destroy detonation range
 
-        DiscordWebhookData data = new($"$Guard {creatorName}", $"{pieceName} $DestroyDestructible {playerName}");
+        DiscordWebhookData data = new(username, $"{pieceName} $DestroyDestructible {playerName}");
 
         if (!_self.canSendWebHook) return;
         Discord.SendMessage(data);

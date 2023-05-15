@@ -17,7 +17,7 @@ internal class Plugin : BaseUnityPlugin
 {
     #region values
 
-    internal const string ModName = "DiscordWard", ModVersion = "1.0.6", ModGUID = "com.Frogger." + ModName;
+    internal const string ModName = "DiscordWard", ModVersion = "1.0.8", ModGUID = "com.Frogger." + ModName;
     internal static Harmony harmony = new(ModGUID);
 
     internal static PrivateArea current;
@@ -82,6 +82,7 @@ internal class Plugin : BaseUnityPlugin
     static ConfigEntry<Toggle> preventCraftingConfig;
     static ConfigEntry<float> webHookTimerConfig;
     static ConfigEntry<float> logWebHookTimerConfig;
+    static ConfigEntry<bool> sendZoneMessagesConfig;
 
     #endregion
 
@@ -98,6 +99,7 @@ internal class Plugin : BaseUnityPlugin
     internal static bool preventCrafting = false;
     internal static float webHookTimer = 2.5f;
     internal static float logWebHookTimer = 2f;
+    internal static bool sendZoneMessages = true;
 
     #endregion
 
@@ -135,6 +137,7 @@ internal class Plugin : BaseUnityPlugin
     private void UpdateConfiguration()
     {
         languageServer = languageServerConfig.Value;
+        sendZoneMessages = sendZoneMessagesConfig.Value;
         if (ZNet.m_isServer)
         {
             moderatorUrl = moderatorUrlConfig.Value;
@@ -220,6 +223,7 @@ internal class Plugin : BaseUnityPlugin
             new ConfigDescription("Url of the moderator's webhook", null,
                 new ConfigurationManagerAttributes
                     { HideSettingName = true, HideDefaultButton = true, Browsable = false }), false);
+        sendZoneMessagesConfig = config("Main", "Send Zone Messages", sendZoneMessages, "Will messages be sent from zones");
         languageServerConfig = config("Main", "server language", "English",
             "The language in which the moderator receives notifications.", true);
         // logrUrlConfig = config("Urls", "logrUrl", "",

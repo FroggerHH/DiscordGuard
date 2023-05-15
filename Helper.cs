@@ -118,11 +118,12 @@ public static class Helper
         if (current)
         {
             isOwner = current.m_piece.IsCreator();
-            bool access = PrivateArea.CheckAccess(Player.m_localPlayer.transform.position, 0f, false, true);
+            bool access = PrivateArea.CheckAccess(Player.m_localPlayer.transform.position, 0f, false, false);
             if (!access)
             {
                 lastPrivateType = PrivateType.Ward;
                 lastPrivateName = current.m_nview.GetZDO().GetString("creatorName");
+                if (lastPrivateName == "-none-" || string.IsNullOrEmpty(lastPrivateName) || string.IsNullOrWhiteSpace(lastPrivateName)) return true;
                 return false;
             }
         }
@@ -146,8 +147,8 @@ public static class Helper
     public static void SimplePatch(string sendKey, bool hold, Player player)
     {
         if (hold) return;
-        if (PatchCheck(ref sendKey, out var creatorName, out var playerName, player)) return;
-        DiscordWebhookData data = new(creatorName, $"{playerName} {sendKey}");
+        if (PatchCheck(ref sendKey, out var username, out var playerName, player)) return;
+        DiscordWebhookData data = new(username, $"{playerName} {sendKey}");
         Discord.SendMessage(data);
     }
 
@@ -221,6 +222,8 @@ public static class Helper
         bool flag = Helper.CheckAccess(out _);
         if (flag) return true;
         playerName = player.GetPlayerName();
+        if (playerName == "-none-" || string.IsNullOrEmpty(playerName) || string.IsNullOrWhiteSpace(playerName)) return true;
+        if (username == "-none-" || string.IsNullOrEmpty(username) || string.IsNullOrWhiteSpace(username)) return true;
         if (!sendKey.StartsWith("$")) sendKey = "$" + sendKey;
         username = lastPrivateType == PrivateType.Ward ? $"$Guard {username}" : $"$Zone {username}";
 

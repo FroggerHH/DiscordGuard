@@ -30,6 +30,7 @@ public static class Discord
 
     internal static void SendMessage(DiscordWebhookData data, bool isStartMsg = false)
     {
+        if (data.username.StartsWith("$Zone") && !sendZoneMessages) return;
         string url;
         if (isStartMsg) url = startMsgWebhook;
         else url = moderatorUrl;
