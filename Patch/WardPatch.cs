@@ -13,6 +13,9 @@ internal class WardPatch
     [HarmonyPatch(typeof(PrivateArea), nameof(PrivateArea.Interact)), HarmonyPostfix]
     public static void SignPatchInteract(PrivateArea __instance, bool hold, Humanoid human)
     {
+        if (!sendGuardInteractMessagesConfig.Value) return;
+
+
         Helper.SimplePatch("$VANILAGuardInteract", hold, human as Player);
     }
 }

@@ -13,6 +13,8 @@ internal class BeehivePatch
     [HarmonyPatch(typeof(Beehive), nameof(Beehive.Interact)), HarmonyPostfix]
     public static void BeehivePatchInteract(Beehive __instance, bool repeat, Humanoid character)
     {
+        if (!sendBeehiveMessagesConfig.Value) return;
+
         Helper.SimplePatch("$Honey", repeat, character as Player);
     }
 }

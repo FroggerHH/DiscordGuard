@@ -17,7 +17,7 @@ internal class Plugin : BaseUnityPlugin
 {
     #region values
 
-    internal const string ModName = "DiscordWard", ModVersion = "1.0.8", ModGUID = "com.Frogger." + ModName;
+    internal const string ModName = "DiscordWard", ModVersion = "1.0.9", ModGUID = "com.Frogger." + ModName;
     internal static Harmony harmony = new(ModGUID);
 
     internal static PrivateArea current;
@@ -83,6 +83,22 @@ internal class Plugin : BaseUnityPlugin
     static ConfigEntry<float> webHookTimerConfig;
     static ConfigEntry<float> logWebHookTimerConfig;
     static ConfigEntry<bool> sendZoneMessagesConfig;
+    
+    internal static ConfigEntry<bool> sendPickupMessagesConfig;
+    internal static ConfigEntry<bool> sendBeehiveMessagesConfig;
+    internal static ConfigEntry<bool> sendChairMessagesConfig;
+    internal static ConfigEntry<bool> sendChestMessagesConfig;
+    internal static ConfigEntry<bool> sendCraftMessagesConfig;
+    internal static ConfigEntry<bool> sendDoorMessagesConfig;
+    internal static ConfigEntry<bool> sendFireplaceMessagesConfig;
+    internal static ConfigEntry<bool> sendItemStandMessagesConfig;
+    internal static ConfigEntry<bool> sendMapTableMessagesConfig;
+    internal static ConfigEntry<bool> sendPickableMessagesConfig;
+    internal static ConfigEntry<bool> sendSignMessagesConfig;
+    internal static ConfigEntry<bool> sendTeleportMessagesConfig;
+    internal static ConfigEntry<bool> sendGuardInteractMessagesConfig;
+    internal static ConfigEntry<bool> sendDamageMessagesConfig;
+    internal static ConfigEntry<bool> sendDestroyMessagesConfig;
 
     #endregion
 
@@ -224,8 +240,8 @@ internal class Plugin : BaseUnityPlugin
                 new ConfigurationManagerAttributes
                     { HideSettingName = true, HideDefaultButton = true, Browsable = false }), false);
         sendZoneMessagesConfig = config("Main", "Send Zone Messages", sendZoneMessages, "Will messages be sent from zones");
-        languageServerConfig = config("Main", "server language", "English",
-            "The language in which the moderator receives notifications.", true);
+        //languageServerConfig = config("Main", "server language", "English",
+        //    "The language in which the moderator receives notifications.", true);
         // logrUrlConfig = config("Urls", "logrUrl", "",
         //     new ConfigDescription(
         //         "It differs in that all messages come here, both from the actions of players on foreign shores and in their own.",
@@ -245,6 +261,22 @@ internal class Plugin : BaseUnityPlugin
         //   true);
         // logWebHookTimerConfig = config("Main", "Log webHookTimer", 2f,
         //     "This is the minimum time interval between sending log webhooks.", true);
+
+        sendPickupMessagesConfig = config("Filter", "Send Pickup messages", true, "");
+        sendBeehiveMessagesConfig = config("Filter", "Send Beehive messages", true, "");
+        sendChairMessagesConfig = config("Filter", "Send Chair messages", true, "");
+        sendChestMessagesConfig = config("Filter", "Send Chest messages", true, "");
+        sendCraftMessagesConfig = config("Filter", "Send Craft messages", true, "");
+        sendDoorMessagesConfig = config("Filter", "Send Door messages", true, "");
+        sendFireplaceMessagesConfig = config("Filter", "Send Fireplace messages", true, "");
+        sendItemStandMessagesConfig = config("Filter", "Send ItemStand messages", true, "");
+        sendMapTableMessagesConfig = config("Filter", "Send MapTable messages", true, "");
+        sendPickableMessagesConfig = config("Filter", "Send Pickable messages", true, "");
+        sendSignMessagesConfig = config("Filter", "Send Sign messages", true, "");
+        sendTeleportMessagesConfig = config("Filter", "Send Teleport messages", true, "");
+        sendGuardInteractMessagesConfig = config("Filter", "Send GuardInteract messages", true, "");
+        sendDamageMessagesConfig = config("Filter", "Send Damage messages", true, "");
+        sendDestroyMessagesConfig = config("Filter", "Send Destroy messages", true, "");
 
         Config.SaveOnConfigSet = true;
 

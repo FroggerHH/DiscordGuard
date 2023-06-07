@@ -13,6 +13,9 @@ internal class WearNTearPatch
     [HarmonyPatch(typeof(WearNTear), nameof(WearNTear.Damage)), HarmonyPostfix]
     static void WearNTearDamagePatch(WearNTear __instance, HitData hit)
     {
+        if (!sendDamageMessagesConfig.Value) return;
+
+
         Character attacker = hit.GetAttacker();
         if (!attacker) return;
         string attackerMName = attacker.GetHoverName();
@@ -46,6 +49,9 @@ internal class WearNTearPatch
     [HarmonyPatch(typeof(WearNTear), nameof(WearNTear.Destroy)), HarmonyPostfix]
     static void WearNTearDestroyPatch(WearNTear __instance)
     {
+        if (!sendDestroyMessagesConfig.Value) return;
+
+
         string sendKey = string.Empty;
         if (Helper.PatchCheck(ref sendKey, out var username, out var playerName, Player.m_localPlayer)) return;
 

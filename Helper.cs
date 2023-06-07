@@ -16,7 +16,7 @@ public static class Helper
     {
         Player current = null;
         float oldDistance = range;
-        foreach (Player o in Player.m_players)
+        foreach (Player o in Player.s_players)
         {
             if (!o) continue;
             float dist = Vector3.Distance(to.transform.position, o.transform.position);
@@ -53,7 +53,7 @@ public static class Helper
 
         if (to == Vector3.zero) return false;
         float oldDistance = range;
-        foreach (Player o in Player.m_players)
+        foreach (Player o in Player.s_players)
         {
             if (!o) continue;
             float dist = Vector3.Distance(to, o.transform.position);
