@@ -152,7 +152,7 @@ internal class Plugin : BaseUnityPlugin
 
     private void UpdateConfiguration()
     {
-        languageServer = languageServerConfig.Value;
+       // languageServer = languageServerConfig.Value;
         sendZoneMessages = sendZoneMessagesConfig.Value;
         if (ZNet.m_isServer)
         {
