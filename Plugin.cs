@@ -17,7 +17,7 @@ internal class Plugin : BaseUnityPlugin
 {
     #region values
 
-    internal const string ModName = "DiscordWard", ModVersion = "1.0.9", ModGUID = "com.Frogger." + ModName;
+    internal const string ModName = "DiscordWard", ModVersion = "1.1.0", ModGUID = "com.Frogger." + ModName;
     internal static Harmony harmony = new(ModGUID);
 
     internal static PrivateArea current;
@@ -83,7 +83,7 @@ internal class Plugin : BaseUnityPlugin
     static ConfigEntry<float> webHookTimerConfig;
     static ConfigEntry<float> logWebHookTimerConfig;
     static ConfigEntry<bool> sendZoneMessagesConfig;
-    
+
     internal static ConfigEntry<bool> sendPickupMessagesConfig;
     internal static ConfigEntry<bool> sendBeehiveMessagesConfig;
     internal static ConfigEntry<bool> sendChairMessagesConfig;
@@ -152,7 +152,17 @@ internal class Plugin : BaseUnityPlugin
 
     private void UpdateConfiguration()
     {
-       // languageServer = languageServerConfig.Value;
+        languageServer = languageServerConfig.Value;
+        try
+        {
+            localization.SetupLanguage(languageServer);
+        }
+        catch (Exception e)
+        {
+            DebugError($"Cant find language {languageServer}", false);
+            localization = english;
+        }
+
         sendZoneMessages = sendZoneMessagesConfig.Value;
         if (ZNet.m_isServer)
         {
@@ -191,7 +201,7 @@ internal class Plugin : BaseUnityPlugin
         }
     }
 
-    public static void DebugError(string msg, bool showWriteToDev)
+    public static void DebugError(object msg, bool showWriteToDev)
     {
         if (showWriteToDev)
         {
@@ -212,6 +222,9 @@ internal class Plugin : BaseUnityPlugin
     }
 
     #endregion
+
+    internal static Localization english = null!;
+    internal static Localization localization = null!;
 
     private void Awake()
     {
@@ -239,9 +252,10 @@ internal class Plugin : BaseUnityPlugin
             new ConfigDescription("Url of the moderator's webhook", null,
                 new ConfigurationManagerAttributes
                     { HideSettingName = true, HideDefaultButton = true, Browsable = false }), false);
-        sendZoneMessagesConfig = config("Main", "Send Zone Messages", sendZoneMessages, "Will messages be sent from zones");
-        //languageServerConfig = config("Main", "server language", "English",
-        //    "The language in which the moderator receives notifications.", true);
+        sendZoneMessagesConfig =
+            config("Main", "Send Zone Messages", sendZoneMessages, "Will messages be sent from zones");
+        languageServerConfig = config("Main", "server language", "English",
+            "The language in which the moderator receives notifications.", true);
         // logrUrlConfig = config("Urls", "logrUrl", "",
         //     new ConfigDescription(
         //         "It differs in that all messages come here, both from the actions of players on foreign shores and in their own.",
@@ -281,6 +295,11 @@ internal class Plugin : BaseUnityPlugin
         Config.SaveOnConfigSet = true;
 
         #endregion
+
+        english = new Localization();
+        english.SetupLanguage("English");
+        localization = english;
+
 
         SetupWatcher();
         Config.SettingChanged += (_, _) => { UpdateConfiguration(); };
@@ -354,7 +373,9 @@ internal class Plugin : BaseUnityPlugin
             if (!inZone) return;
             inZone = false;
             data.content += lastPrivateType == PrivateType.Ward ? "$LeftGuard" : "$LeftZone";
-            data.username += lastPrivateType == PrivateType.Ward ? $"$Guard {lastPrivateName}" : $"$Zone {lastPrivateName}";
+            data.username += lastPrivateType == PrivateType.Ward
+                ? $"$Guard {lastPrivateName}"
+                : $"$Zone {lastPrivateName}";
             Discord.SendMessage(data);
             return;
         }
@@ -364,7 +385,9 @@ internal class Plugin : BaseUnityPlugin
             if (inZone) return;
             inZone = true;
             data.content += lastPrivateType == PrivateType.Ward ? "$InGuard" : "$InZone";
-            data.username += lastPrivateType == PrivateType.Ward ? $"$Guard {lastPrivateName}" : $"$Zone {lastPrivateName}";
+            data.username += lastPrivateType == PrivateType.Ward
+                ? $"$Guard {lastPrivateName}"
+                : $"$Zone {lastPrivateName}";
             Discord.SendMessage(data);
             return;
         }

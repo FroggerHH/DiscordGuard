@@ -113,7 +113,7 @@
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
-      <Content Include="Build\DiscordGuard.dll" />
+      <Content Include="Build\DiscordWard.dll" />
       <Content Include="ILRepack.targets" />
       <Content Include="README.md" />
       <EmbeddedResource Include="translations\English.yml">

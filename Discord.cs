@@ -40,10 +40,10 @@ public static class Discord
             return;
         }
 
-        data.username = Localization.instance.Localize(data.username);
-        if (data.content.Contains("VANILAGuardInteract")) data.content = Localization.instance.Localize(data.content);
+        data.username = localization.Localize(data.username);
+        if (data.content.Contains("VANILAGuardInteract")) data.content = localization.Localize(data.content);
 
-        data.content = Localization.instance.Localize(data.content);
+        data.content = localization.Localize(data.content);
 
         new DiscordMessage()
             .SetUsername(data.username)
